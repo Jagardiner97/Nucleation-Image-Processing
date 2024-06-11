@@ -5,29 +5,56 @@ tic;
 sensitivity = 2;
 
 %% Get the Number of Pictures
-num_pictures = 1;
+num_pictures = 420;
+np_str = string(num_pictures);
 file_type = '.jpg';
+directory = "Experiment 1/";
 
 %% Read crop information
-cinfo = csvread("test.csv");
+%cinfo = csvread("test.csv");
 xmin = 750;
 ymin = 650;
 width = 3200;
 height = 2000;
 circle_radii_range = [35, 100];
-circle_sensitivity = 0.805;
+circle_sensitivity = 0.82;
 circle_edge_threshold = 0.037;
 
 
 %% Select the Calibration Image
-cal_pic_name = "G0389097.jpg";%strcat(num_pictures, file_type);
+cal_pic_name = strcat(directory, np_str, file_type);
 cal_pic = imread(cal_pic_name);
 cal_pic = imcrop(cal_pic, [xmin ymin width height]);
 [centers, radii] = imfindcircles(cal_pic, circle_radii_range, 'Sensitivity', circle_sensitivity, 'EdgeThreshold', circle_edge_threshold);
 cal_gray = rgb2gray(cal_pic);
 num_drops = length(radii);
-imshow(cal_gray)
-viscircles(centers, radii);
+
+%% Remove Overlapping Droplets
+ave_rad = mean(radii);
+overlapping = [];
+for i = 1:num_drops
+    if not(ismember(i, overlapping))
+        for j = 1:num_drops
+            if (j ~= i) && (not(ismember(j, overlapping)))
+                dx = centers(i,1) - centers(j,1);
+                dy = centers(i,2) - centers(j,2);
+                dist = sqrt(dx^2 + dy^2);
+                if dist < ave_rad * 1.2
+                    overlapping = [overlapping; j];
+                end
+            end
+        end    
+    end    
+end
+overlap_descending = sort(overlapping, 'descend');
+for i = 1:length(overlap_descending)
+    remove = overlap_descending(i);
+    centers(remove,:) = [];
+    radii(remove,:) = [];
+end
+%imshow(cal_gray)
+%viscircles(centers, radii)
+num_drops = length(radii);
 
 %% Create Droplet Structure
 droplet = struct('number',cell(1,num_drops), 'coordinates',[0,0], 'radius',0, 'status',-1, 'curr_mpv',0, 'pixels',1, 'numPixels',1);
@@ -53,10 +80,10 @@ for i = 1:num_drops
 end
 
 %% Iterate Through the Pictures
-for j = 0:num_pictures
+for j = 1:num_pictures
     % open the next picture
     pic_num = j; %change this if the pictures start at 1
-    pic_name = strcat(pic_num, file_type);
+    pic_name = strcat(directory, string(pic_num), file_type);
     curr_pic = imread(pic_name);
     curr_pic = imcrop(curr_pic, [xmin ymin width height]);
     gray_pic = rgb2gray(curr_pic);
@@ -90,8 +117,9 @@ imshow(cal_gray);
 viscircles(centers, radii);
 
 %% Create the Report
-mkdir results
-writematrix(report, 'results/report.csv');
-saveas(gcf, 'results/droplets.png');
+results_dir_name = strcat(directory, "results");
+mkdir (results_dir_name)
+writematrix(report, strcat(results_dir_name, '/report.csv'));
+saveas(gcf, strcat(results_dir_name, '/droplets.png'));
 
 toc;
