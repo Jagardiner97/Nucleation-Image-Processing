@@ -56,6 +56,30 @@ end
 %viscircles(centers, radii)
 num_drops = length(radii);
 
+%% Reorder Droplets
+vsorted = sort(centers, 2); %sort based on the y coordinate
+row_coord = 0;
+row_end_index = [];
+last_row = 0;
+
+% Sort into rows
+for i = 1:num_drops
+    if last_row > 0
+        n_in_row = i - last_row;
+        row_coord_mean = row_coord / n_in_row;
+    end
+    if row_coord == 0
+        row_coord = centers(i,2);
+    elseif centers(i,2) > row_coord + 50
+        row_end_index.append(i);
+    else
+        row_coord = row_coord + centers(i,2);
+    end
+end
+
+% Sort rows by x coordinate
+
+
 %% Create Droplet Structure
 droplet = struct('number',cell(1,num_drops), 'coordinates',[0,0], 'radius',0, 'status',-1, 'curr_mpv',0, 'pixels',1, 'numPixels',1);
 [num_rows, num_columns] = size(cal_gray, [1,2]);
