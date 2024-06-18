@@ -8,7 +8,7 @@ sensitivity = 2;
 num_pictures = 420;
 np_str = string(num_pictures);
 file_type = '.jpg';
-directory = "Experiment 1/";
+directory = "Test Images/Experiment 1/";
 
 %% Read crop information
 %cinfo = csvread("test.csv");
@@ -56,27 +56,40 @@ end
 %viscircles(centers, radii)
 num_drops = length(radii);
 
+centers_and_radii = [centers, radii];
+
 %% Reorder Droplets
-vsorted = sort(centers, 2); %sort based on the y coordinate
+vsorted = sortrows(centers_and_radii, 2); %sort based on the y coordinate
 row_coord = 0;
 row_end_index = [];
 last_row = 0;
 
+% Sorting parameters
+row_tolerance = 100;
+
 % Sort into rows
 for i = 1:num_drops
+    % Find the mean y coordinate of the row
+    y_val = vsorted(i, 2);
+    row_coord = row_coord + y_val;
     if last_row > 0
         n_in_row = i - last_row;
         row_coord_mean = row_coord / n_in_row;
+    else 
+        row_coord_mean = row_coord / i;
     end
-    if row_coord == 0
-        row_coord = centers(i,2);
-    elseif centers(i,2) > row_coord + 50
-        row_end_index.append(i);
+    
+    % Determine if the current droplet is in a new row
+    if y_val > row_coord_mean + row_tolerance
+        row_end_index = [row_end_index; i-1];
+        last_row = i-1;
+        row_coord = y_val;
     else
-        row_coord = row_coord + centers(i,2);
+        row_coord = row_coord + y_val;
     end
 end
 
+row_end_index = [row_end_index; num_drops];
 % Sort rows by x coordinate
 
 
