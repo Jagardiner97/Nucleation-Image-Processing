@@ -72,26 +72,31 @@ for i = 1:num_drops
     % Find the mean y coordinate of the row
     y_val = vsorted(i, 2);
     row_coord = row_coord + y_val;
-    if last_row > 0
-        n_in_row = i - last_row;
-        row_coord_mean = row_coord / n_in_row;
-    else 
-        row_coord_mean = row_coord / i;
-    end
+    n_in_row = i - last_row;
+    row_coord_mean = row_coord / n_in_row;
     
     % Determine if the current droplet is in a new row
     if y_val > row_coord_mean + row_tolerance
         row_end_index = [row_end_index; i-1];
         last_row = i-1;
         row_coord = y_val;
-    else
-        row_coord = row_coord + y_val;
     end
 end
-
 row_end_index = [row_end_index; num_drops];
-% Sort rows by x coordinate
 
+% Sort rows by x coordinate
+number = numel(row_end_index);
+last_row = 0;
+for i = 1:number
+    start_index = last_row + 1;
+    end_index = row_end_index(i);
+    B = sortrows(vsorted(start_index:end_index, :), 1);
+    vsorted(start_index:end_index, :) = B;
+    last_row = end_index;
+end
+
+centers = vsorted(:, 1:2);
+radii = vsorted(:, 3);
 
 %% Create Droplet Structure
 droplet = struct('number',cell(1,num_drops), 'coordinates',[0,0], 'radius',0, 'status',-1, 'curr_mpv',0, 'pixels',1, 'numPixels',1);
