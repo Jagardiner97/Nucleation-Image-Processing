@@ -2,13 +2,13 @@ clear;
 tic;
 
 %% Define Sensitivity
-sensitivity = 2;
+sensitivity = 4;
 
 %% Get the Number of Pictures
-num_pictures = 420;
+num_pictures = 463;
 np_str = string(num_pictures);
 file_type = '.jpg';
-directory = "Test Images/Experiment 1/";
+directory = "Test Images/Experiment 2/";
 
 %% Read crop information
 %cinfo = csvread("test.csv");
@@ -130,12 +130,18 @@ for j = 1:num_pictures
     curr_pic = imcrop(curr_pic, [xmin ymin width height]);
     gray_pic = rgb2gray(curr_pic);
 
-    % iterate through each unfrozen droplet and check status
-    for k = 1:num_drops
-        if droplet(k).status < 0
-            new_MPV = sum((double(droplet(k).pixels).*double(gray_pic))/droplet(k).num_pixels, 'all');
-            if abs(new_MPV - droplet(k).curr_mpv) > sensitivity
-                droplet(k).status = j;
+    if j == 1
+        for k = 1:num_drops
+            droplet(k).curr_mpv = sum((double(droplet(k).pixels).*double(gray_pic))/droplet(k).num_pixels, 'all');
+        end
+    else 
+         % iterate through each unfrozen droplet and check status
+        for k = 1:num_drops
+            if droplet(k).status < 0
+                new_MPV = sum((double(droplet(k).pixels).*double(gray_pic))/droplet(k).num_pixels, 'all');
+                if abs(new_MPV - droplet(k).curr_mpv) > sensitivity
+                    droplet(k).status = j;
+                end
             end
         end
     end
