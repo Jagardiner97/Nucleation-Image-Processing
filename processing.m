@@ -8,7 +8,7 @@ sensitivity = 12;
 num_pictures = 233;
 np_str = string(num_pictures);
 file_type = '.jpg';
-directory = "Test Images/Picture Sets/5/";
+directory = "5/";
 
 %% Read crop information
 xmin = 0;
@@ -50,10 +50,7 @@ for i = 1:length(overlap_descending)
     centers(remove,:) = [];
     radii(remove,:) = [];
 end
-%imshow(cal_gray)
-%viscircles(centers, radii)
 num_drops = length(radii);
-
 centers_and_radii = [centers, radii];
 
 %% Reorder Droplets
