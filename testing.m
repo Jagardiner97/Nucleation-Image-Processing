@@ -1,29 +1,27 @@
 clear;
 tic;
 
-num_test_values = 5;
+num_test_values = 10;
 min_error = inf;
 best_sensitivity = 0;
 mean_errors = zeros(1,num_test_values);
-actual = [289, 360, 397, 180, 156, 352, 287, 145, 347, 226, 119, 289, 74, 237, 215, 342, 76];
+actual = [275, 279, 274, 304, 286, 303, 259, 259, 288, 313, 288, 263, 262, 271, 179, 293, 244, 263, 297];
 all_calculated = [];
 
 %% Get the Number of Pictures
-num_pictures = 420;
+num_pictures = 330;
 np_str = string(num_pictures);
 file_type = '.jpg';
-directory = "Test Images/Experiment 1/";
+directory = "Test Images/Picture Sets/1/";
 
 %% Read crop information
-%cinfo = csvread("test.csv");
-xmin = 750;
-ymin = 650;
-width = 3200;
-height = 2000;
+xmin = 0;
+ymin = 500;
+width = 4000;
+height = 2500;
 circle_radii_range = [35, 100];
-circle_sensitivity = 0.82;
+circle_sensitivity = 0.87;
 circle_edge_threshold = 0.037;
-
 
 %% Select the Calibration Image
 cal_pic_name = strcat(directory, np_str, file_type);

@@ -2,24 +2,22 @@ clear;
 tic;
 
 %% Define Sensitivity
-sensitivity = 4;
+sensitivity = 12;
 
 %% Get the Number of Pictures
-num_pictures = 463;
+num_pictures = 233;
 np_str = string(num_pictures);
 file_type = '.jpg';
-directory = "Test Images/Experiment 2/";
+directory = "Test Images/Picture Sets/5/";
 
 %% Read crop information
-%cinfo = csvread("test.csv");
-xmin = 750;
-ymin = 650;
-width = 3200;
-height = 2000;
+xmin = 0;
+ymin = 500;
+width = 4000;
+height = 2500;
 circle_radii_range = [35, 100];
-circle_sensitivity = 0.82;
+circle_sensitivity = 0.87;
 circle_edge_threshold = 0.037;
-
 
 %% Select the Calibration Image
 cal_pic_name = strcat(directory, np_str, file_type);
