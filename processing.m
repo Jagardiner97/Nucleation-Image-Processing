@@ -3,7 +3,7 @@ clear;
 tic;
 
 %% Change the Image Directory
-directory = "5/"; %path to folder where the images are stored
+directory = "Test Images/Experiment 1/"; %path to folder where the images are stored with trailing "/"
 
 %% Read Crop Information
 % change xmin, ymin, width, and height
@@ -186,7 +186,7 @@ viscircles(centers, radii);
 %% Create the Report
 % check if there is a results directory inside the image directory
 results_dir_name = strcat(directory, "results");
-if ~exist(result_dir_name, 'dir')
+if ~exist(results_dir_name, 'dir')
     % make a results folder if none found
     mkdir (results_dir_name)
 end
